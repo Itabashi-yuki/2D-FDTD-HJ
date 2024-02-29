@@ -1,0 +1,9 @@
+*.dat
+*.gif
+*.png
+*.o
+main
+/data
+/test
+test
+test.cpp
