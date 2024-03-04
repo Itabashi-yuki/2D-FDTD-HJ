@@ -23,45 +23,6 @@ constexpr double Z { std::sqrt(MU0 / EPS0) };
 constexpr double Y { 1.0 / Z };
 constexpr int L { 10 };
 
-// struct PML_idx{
-//     int i1, j1, i2, j2;
-// };
-
-// class PML_domain_E{
-// public:
-//     PML_idx idx[4];
-
-//     PML_domain_E(){
-//         idx[0] = {1, 1, L, Ny - 1};
-//         idx[1] = {Nx - L, 1, Nx - 1, Ny - 1};
-//         idx[2] = {L + 1, 1, Nx - L - 1, L};
-//         idx[3] = {L + 1, Ny - L, Nx - L - 1, Ny - 1};
-//     }      
-// };
-
-// class PML_domain_Hx{
-// public:
-//     PML_idx idx[4];
-
-//     PML_domain_Hx(){
-//         idx[0] = {1, 0, L, Ny - 1};
-//         idx[1] = {Nx - L, 0, Nx - 1, Ny - 1};
-//         idx[2] = {L + 1, 0, Nx - L - 1, L - 1};
-//         idx[3] = {L + 1, Ny - L, Nx - L - 1, Ny - 1};
-//     }      
-// };
-
-// class PML_domain_Hy{
-// public:
-//     PML_idx idx[4];
-
-//     PML_domain_Hy(){
-//         idx[0] = {0, 1, L - 1, Ny - 1};
-//         idx[1] = {Nx - L, 1, Nx - 1, Ny - 1};
-//         idx[2] = {L, 1, Nx - L - 1, L};
-//         idx[3] = {L, Ny - L, Nx - L - 1, Ny - 1};
-//     }
-// };
 
 void update_E(double **Ez, double **Hx, double **Hy, double *Jz, int n);
 void update_E_PML(double **Ez, double **Ezx, double **Ezy, double **Hx, double **Hy, double *CEZX1, double *CEZX2, double *CEZY1, double *CEZY2);

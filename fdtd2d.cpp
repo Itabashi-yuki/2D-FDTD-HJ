@@ -27,7 +27,7 @@ int main(){
     
     initialize_PML(CEZX1, CEZX2, CEZY1, CEZY2, CHX1, CHX2, CHY1, CHY2);
 
-    std::ofstream ofs("obs2.dat");
+    std::ofstream ofs("obs_CCS.dat");
     for(int n = 1; n < Nt; n++){
         if(n % 100 == 0)
             std::cout << n << " / " << Nt << std::endl;
