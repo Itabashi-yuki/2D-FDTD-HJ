@@ -2,6 +2,7 @@
 *.gif
 *.png
 *.o
+*.sh
 main
 /data
 /test
