@@ -3,6 +3,7 @@
 *.png
 *.o
 *.sh
+*.out
 main
 /data
 /test
