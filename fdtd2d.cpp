@@ -16,6 +16,11 @@ int main(){
     double **Hz = allocate_2d(Nx, Ny, 0.0);
     double **Hzx = allocate_2d(Nx, Ny, 0.0);
     double **Hzy = allocate_2d(Nx, Ny, 0.0);
+    double ***Dx = allocate_3d(2, Nx, Ny+1, 0.0);
+    double ***Dy = allocate_3d(2, Nx+1, Ny, 0.0);
+    double ***Dz = allocate_3d(2, Nx+1, Ny+1, 0.0);
+    double ***Dzx = allocate_3d(2, Nx+1, Ny+1, 0.0);
+    double ***Dzy = allocate_3d(2, Nx+1, Ny+1, 0.0);
     double ***Jex = allocate_3d(2, Nx, Ny+1, 0.0);
     double ***Jey = allocate_3d(2, Nx+1, Ny, 0.0);
     double ***Jez = allocate_3d(2, Nx+1, Ny+1, 0.0);
@@ -28,6 +33,14 @@ int main(){
     double *CEZX2 = allocate_1d(Nx, 0.0);
     double *CEZY1 = allocate_1d(Ny, 0.0);
     double *CEZY2 = allocate_1d(Ny, 0.0);
+    double *CDX1 = allocate_1d(Nx, 0.0);
+    double *CDX2 = allocate_1d(Nx, 0.0);
+    double *CDY1 = allocate_1d(Ny, 0.0);
+    double *CDY2 = allocate_1d(Ny, 0.0);
+    double *CDZX1 = allocate_1d(Nx, 0.0);
+    double *CDZX2 = allocate_1d(Nx, 0.0);
+    double *CDZY1 = allocate_1d(Ny, 0.0);
+    double *CDZY2 = allocate_1d(Ny, 0.0);
     double *CHX1 = allocate_1d(Nx, 0.0);
     double *CHX2 = allocate_1d(Nx, 0.0);
     double *CHY1 = allocate_1d(Ny, 0.0);
@@ -64,12 +77,13 @@ int main(){
 
     initialize_Plasma(S, B, Ne_exp, nu_exp);
     initialize_PML(CEX1, CEX2, CEY1, CEY2, CEZX1, CEZX2, CEZY1, CEZY2,
-                 CHX1, CHX2, CHY1, CHY2, CHZX1, CHZX2, CHZY1, CHZY2);
+                    CDX1, CDX2, CDY1, CDY2, CDZX1, CDZX2, CDZY1, CDZY2,
+                     CHX1, CHX2, CHY1, CHY2, CHZX1, CHZX2, CHZY1, CHZY2);
     // int n0 = cal_obs_n0();
-    int n0 = 5;
+    int n0 = 10;
 
     // std::ofstream ofs_div_time("./data/" + global_dirName +"/div_time_dt="+ std::to_string(Cdt) + ".dat", std::ios::app);
-
+    std::ofstream ofs_source("./data/" + global_dirName + "/source.dat", std::ios::app);
     for(int n = 1; n < Nt; n++){
         double t = (n - 0.5) * dt;
 
@@ -77,10 +91,18 @@ int main(){
             std::cout << n << " / " << Nt << std::endl;
 
         update_E(Ex, Ey, Ez, Hx, Hy, Hz, Jex, Jey, Jez, n);
-        update_Ex_PML(Ex, Hz, CEX1, CEX2);
-        update_Ey_PML(Ey, Hz, CEY1, CEY2);
-        update_Ez_PML(Ez, Ezx, Ezy, Hx, Hy, CEZX1, CEZX2, CEZY1, CEZY2);
+        update_Dx_PML(Dx, Hz, CDX1, CDX2, n);
+        update_Dy_PML(Dy, Hz, CDY1, CDY2, n);
+        update_Dz_PML(Dz, Dzx, Dzy, Hx, Hy, CDZX1, CDZX2, CDZY1, CDZY2, n);
+        // update_Ex_PML(Ex, Hz, CEX1, CEX2);
+        // update_Ey_PML(Ey, Hz, CEY1, CEY2);
+        // update_Ez_PML(Ez, Ezx, Ezy, Hx, Hy, CEZX1, CEZX2, CEZY1, CEZY2);
+        update_Ex_PML(Ex, Dx, Jex, n);
+        update_Ey_PML(Ey, Dy, Jey, n);
+        update_Ez_PML(Ez, Dz, Jez, n);
         Ez[int(source_x / dx)][int(source_y / dy)] -= dt / EPS0 * Jz(t);
+
+        ofs_source << t << " " << Jz(t) << " " << Ez[int(source_x / dx)][int(source_y / dy)] << std::endl;
 
         update_H(Hx, Hy, Hz, Ex, Ey, Ez);
         update_Hx_PML(Hx, Ez, CHX1, CHX2);
@@ -89,7 +111,7 @@ int main(){
 
         update_J(Jex, Jey, Jez, Ex, Ey, Ez, S, B, n);
         
-        output_Ez(Ex, Ey, Ez, n, n0);
+        // output_Ez(Ex, Ey, Ez, n, n0);
         output_obs(Ex, Ey, Ez, Hx, Hy, Hz, Jex, Jey, Jez, n);
 
         // if(std::abs(Ez[int(obs_x / dx)][int(obs_y / dy)]) > 10000){
@@ -110,6 +132,11 @@ int main(){
     free_memory2d(Ez, Nx+1);
     free_memory2d(Ezx, Nx+1);
     free_memory2d(Ezy, Nx+1);
+    free_memory3d(Dx, 2, Nx);
+    free_memory3d(Dy, 2, Ny+1);
+    free_memory3d(Dz, 2, Nx+1);
+    free_memory3d(Dzx, 2, Nx+1);
+    free_memory3d(Dzy, 2, Nx+1);
     free_memory2d(Hx, Nx+1);
     free_memory2d(Hy, Nx);
     free_memory2d(Hz, Nx);
@@ -124,6 +151,14 @@ int main(){
     delete [] CEZX2;
     delete [] CEZY1;
     delete [] CEZY2;
+    delete [] CDX1;
+    delete [] CDX2;
+    delete [] CDY1;
+    delete [] CDY2;
+    delete [] CDZX1;
+    delete [] CDZX2;
+    delete [] CDZY1;
+    delete [] CDZY2;
     delete [] CHX1;
     delete [] CHX2;
     delete [] CHY1;

@@ -6,7 +6,7 @@
 void output_pal(double Ne, double nu){
     std::ofstream ofs_pal("./data/" + global_dirName + "/pal.dat",std::ios::app);
 
-    ofs_pal << "(pi / 2, 0)から(pi / 4, pi, 4)に向きを変更" << std::endl;
+    ofs_pal << "プラズマ導入" << std::endl;
     ofs_pal << std::endl;
 
     ofs_pal << "Rx = " << Rx << std::endl;

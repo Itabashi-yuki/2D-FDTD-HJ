@@ -31,10 +31,10 @@ double cal_Ne(double Ne_exp){
     // /*  入力ファイルの高度と解析領域における位置のズレの修正 */
     // int Ne_alt_int = int(Nx_iono_lower + 2 * (Ne_alt - Ne_input_file_alt_lower));
     // double Ne_const = Ne[Ne_alt_int];
-    // double Ne_const = 4.0e5;    
+    // double Ne_const = 4.0e5; 
     
-    double Ne_const = std::pow(10,Ne_exp);
-    // double Ne_const = 0.0;
+    // double Ne_const = std::pow(10,Ne_exp);
+    double Ne_const = 0.0;
     return Ne_const;
 
     // delete [] Alt;
@@ -44,6 +44,21 @@ double cal_Ne(double Ne_exp){
 void initialize_Plasma(Eigen::Matrix3d **S, Eigen::Matrix3d **B, double Ne_exp, double nu_exp){
     double Ne_const = cal_Ne(Ne_exp);
     double nu_const = cal_nu(nu_exp);
+
+    
+    std::ofstream ofs_Ne("./data/" + global_dirName + "/Ne.dat"); 
+    double Ne_min_exp = 7;    
+    double Ne_max_exp = 12;
+
+    double *Ne = allocate_1d(Nx_iono, 0.0);
+    for(int i = Nx_iono_lower; i <= Nx_iono_upper; i++){
+        double k = i - Nx_iono_lower;
+        Ne[i] = std::pow(10, (Ne_max_exp * k + Ne_min_exp * (Nx_iono - k)) / Nx_iono);
+        ofs_Ne << i * dx * 1e-3 << " " << Ne[i] << std::endl;
+    }
+    ofs_Ne.close();
+    // exit(0);
+
     // double nu_const = cal_nu(nu_exp * 1.0e3);
 
     std::cout << "Ne = " << Ne_const << ", nu = " << nu_const << std::endl;
@@ -53,7 +68,10 @@ void initialize_Plasma(Eigen::Matrix3d **S, Eigen::Matrix3d **B, double Ne_exp, 
             double Omg_0 = 1.0 / dt + nu_const / 2.0;
             double Omg_0_prime = 1.0 / dt - nu_const / 2.0;
             double Omg_c = CHARGE_e * B0 / MASS_e;
-            double Omg_p = omg_p(Ne_const);
+            // double Omg_p = omg_p(Ne_const);
+            double Omg_p = omg_p(Ne[i]);
+
+
 
             Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
             Eigen::Matrix3d A, R1, R2;
