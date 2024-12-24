@@ -2,7 +2,7 @@
 
 void update_E(double **Ex, double **Ey, double **Ez, double **Hx, double **Hy, double **Hz,
                  double ***Jex, double ***Jey, double ***Jez, int n){
-    int NEW = n % 2;
+    // int NEW = n % 2;
     int OLD = (n+1) % 2;
 
     for(int i = L; i < Nx - L; i++){

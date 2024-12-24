@@ -24,7 +24,7 @@ constexpr double Tmax { 0.001 };
 // constexpr double Tmax { 0.00085 };
 // constexpr double Tmax { 300.0 };
 
-constexpr double Ne_max { 1.0e11 };
+constexpr double Ne_max { 1.0e8 }; /* この値以上の電子密度を設定すると安定条件（非磁化プラズマ）を満たさない */
 constexpr double Omega { std::sqrt(CHARGE_e * CHARGE_e * Ne_max / MASS_e / EPS0) };
 constexpr double xi {1.0 / std::sqrt(1 + Omega * Omega / 4.0  / C0 / C0 / ( 1.0 / dx / dx + 1.0 / dy / dy))};
 constexpr double dt { xi * 0.9999 / C0 / std::sqrt( 1 / dx / dx + 1 / dy / dy ) };
@@ -35,6 +35,7 @@ constexpr double dt { xi * 0.9999 / C0 / std::sqrt( 1 / dx / dx + 1 / dy / dy ) 
 constexpr int Nt { int(Tmax / dt) };
 // constexpr int Nt { 500 };
 
+/* 電流源パラメタ */
 constexpr double source_x { 30.0e3 };
 constexpr double source_y { 50.0e3 };
 // constexpr double source_x { Rx / 2.0 - 20.0e3 };

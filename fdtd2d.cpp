@@ -53,9 +53,11 @@ int main(){
     // double Ez_max = -1.0;
 
     double Ne_exp, nu_exp; /* Neとnuの指数部 10^(Ne_exp) */
+    std::cout << "電子密度 10^n, 電子密度の指数部 n を指定してください："
     std::cin >> Ne_exp;
     // Ne_exp = 7.0;
     // std::cin >> nu_exp;
+    /* 衝突周波数の指数部の指定 */
     nu_exp = 7.0;
 
     make_dir();
@@ -66,14 +68,15 @@ int main(){
     initialize_PML(CEX1, CEX2, CEY1, CEY2, CEZX1, CEZX2, CEZY1, CEZY2,
                  CHX1, CHX2, CHY1, CHY2, CHZX1, CHZX2, CHZY1, CHZY2);
     // int n0 = cal_obs_n0();
-    int n0 = 5;
+    /* n0の値のステップ数ごとにEzファイルを出力 */
+    int n0 = 100;
 
     // std::ofstream ofs_div_time("./data/" + global_dirName +"/div_time_dt="+ std::to_string(Cdt) + ".dat", std::ios::app);
 
     for(int n = 1; n < Nt; n++){
         double t = (n - 0.5) * dt;
 
-        if(n % 1000 == 0)
+        if(n % 100 == 0)
             std::cout << n << " / " << Nt << std::endl;
 
         update_E(Ex, Ey, Ez, Hx, Hy, Hz, Jex, Jey, Jez, n);
